@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DOCKER_COMPOSE_VERSION=1.23.2
-DOCKER_COMPOSE_FILE=https://github.com/unsimplesistemista/docker-wordpress/blob/master/docker-compose.yml
+DOCKER_COMPOSE_FILE=https://raw.githubusercontent.com/unsimplesistemista/docker-wordpress/master/docker-compose.yml
 DOCKER_COMPOSE_FILE_TMP=/tmp/1ss-docker-compose.yml
 DOCKER_COMPOSE_PROJECT=wordpress
 
