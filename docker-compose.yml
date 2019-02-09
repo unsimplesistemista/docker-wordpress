@@ -1,0 +1,44 @@
+# Docker-compose example for a Symfony v4 applcation
+version: '3'
+
+services:
+  php:
+    restart: always
+    image: unsimplesistemista/docker-wordpress
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=wordpress
+      - DB_USER=wordpress
+      - DB_PASSWORD=w0rdpr3ss
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # Uncomment this to use your own SSL certificates
+      #- /ssl/server.crt:/etc/nginx/ssl/server.crt:ro
+      #- /ssl/server.key:/etc/nginx/ssl/server.key:ro
+      # Web (documentRoot) directory is /var/www/public inside the container
+      - /data/wordpress/www:/var/www/public
+    logging:
+      options:
+        max-size: "100m"
+    depends_on:
+      - mysql
+
+  mysql:
+    restart: always
+    image: mysql:5.7
+    command:
+      - "--transaction-isolation=READ-COMMITTED"
+      - "--innodb_log_file_size=256M"
+      - "--max_allowed_packet=256M"
+    environment:
+      - "MYSQL_DATABASE=wordpress"
+      - "MYSQL_USER=wordpress"
+      - "MYSQL_PASSWORD=w0rdpr3ss"
+      - "MYSQL_ROOT_PASSWORD=changeme"
+    volumes:
+      - /data/wordrepss/mysql:/var/lib/mysql
+    logging:
+      options:
+        max-size: "100m"
