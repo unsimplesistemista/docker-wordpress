@@ -38,7 +38,7 @@ services:
       - "MYSQL_PASSWORD=w0rdpr3ss"
       - "MYSQL_ROOT_PASSWORD=changeme"
     volumes:
-      - /data/wordrepss/mysql:/var/lib/mysql
+      - /data/wordpress/mysql:/var/lib/mysql
     logging:
       options:
         max-size: "100m"
