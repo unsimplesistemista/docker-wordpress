@@ -16,5 +16,6 @@ if ! command -V docker-compose >/dev/null; then
 fi
 
 curl -sSL ${DOCKER_COMPOSE_FILE} -o ${DOCKER_COMPOSE_FILE_TMP}
+docker-compose -f ${DOCKER_COMPOSE_FILE_TMP} pull
 docker-compose -p ${DOCKER_COMPOSE_PROJECT} -f ${DOCKER_COMPOSE_FILE_TMP} up -d
 exit 0
