@@ -4,7 +4,7 @@ version: '3'
 services:
   php:
     restart: always
-    image: unsimplesistemista/docker-wordpress
+    image: unsimplesistemista/wordpress
     environment:
       - DB_HOST=mysql
       - DB_NAME=wordpress
