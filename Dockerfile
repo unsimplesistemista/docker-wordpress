@@ -19,7 +19,7 @@ ENV USER=${user} \
     DB_USER=wordpress \
     DB_PREFIX=1sswp_ \
     DB_CHARSET=utf8 \
-    SKIP_CACHE=1 \
+    CACHE_ENABLED=0 \
     CACHE_200_MINUTES=1
     
 # Download wp cli
