@@ -18,7 +18,9 @@ ENV USER=${user} \
     DB_NAME=wordpress \
     DB_USER=wordpress \
     DB_PREFIX=1sswp_ \
-    DB_CHARSET=utf8
+    DB_CHARSET=utf8 \
+    SKIP_CACHE=1 \
+    CACHE_200_MINUTES=1
     
 # Download wp cli
 RUN curl -sSLo /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \

@@ -23,6 +23,7 @@ function cleanup {
 function install_wordpress {
   TIME_START=`date +%s`
 
+  chown -R ${USER} ${WP_INSTALL_DIR}
   echo "=> Downloading wordpress version ${WP_VERSION} - this may take a while ..."
   timeout ${WP_CLI_TIMEOUT} sudo -E -u ${USER} -s -- wp core download --path=${WP_INSTALL_DIR} --version=${WP_VERSION}
 
@@ -44,6 +45,7 @@ function install_wordpress {
   timeout ${WP_CLI_TIMEOUT} sudo -E -u ${USER} -s -- wp core language install ${WP_LOCALE} --activate --path=${WP_INSTALL_DIR}
 
   rm -f ${WP_INSTALL_DIR}/${WP_INSTALL_RUNNING_FLAG}
+  chown -R ${USER} ${WP_INSTALL_DIR}
 
   TIME_END=`date +%s`
   echo "=> DONE, Wordpress installed in $((TIME_END-TIME_START)) seconds ..."
