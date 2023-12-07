@@ -2,6 +2,13 @@
 
 [ "$DEBUG" == "1" ] && set -x && set +e
 
+WP_INSTALL_DIR=${WP_INSTALL_DIR}/$1
+
+if [ a"$1" == "a" ]; then
+  echo "=> ERROR: Missing wordpress instance name - execute \"$0 example.com\""
+  exit 1
+fi
+
 if [ a"${DB_PASSWORD}" == "a" ]; then
   echo "=> ERROR: Missing DB_PASSWORD environment variable, use docker run -e DB_PASSWORD=XXXX ..."
   exit 1
@@ -52,7 +59,7 @@ function install_wordpress {
 }
 
 if [ ! -e ${WP_INSTALL_DIR}/${WP_INSTALL_RUNNING_FLAG} -a ! -e ${WP_INSTALL_DIR}/${WP_INSTALL_COMPLETED_FLAG} ]; then
-  echo "=> Wordpress is not installed, running installation process ..."
+  echo "=> Wordpress is not installed on directory ${WP_INSTALL_DIR}, running installation process ..."
   touch ${WP_INSTALL_DIR}/${WP_INSTALL_RUNNING_FLAG}
   trap "cleanup" EXIT
   install_wordpress
