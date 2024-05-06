@@ -1,0 +1,31 @@
+FROM unsimplesistemista/docker-php-fpm:latest-8.1
+
+ARG user=www-data
+ARG wordpress_version=latest
+
+ENV USER=${user} \
+    WP_CLI_TIMEOUT=90 \
+    WP_INSTALL_RUNNING_FLAG=installing \
+    WP_INSTALL_COMPLETED_FLAG=wp-config.php \
+    WP_INSTALL_DIR=/var/www/public \
+    WP_VERSION=${wordpress_version} \
+    WP_SITEURL=example.com \
+    WP_TITLE="UnSimpleSistemista Example Wordpress" \
+    WP_ADMIN_USER=admin \
+    WP_ADMIN_PASSWORD=changeme \
+    WP_ADMIN_EMAIL=example@domain.com \
+    WP_LOCALE=en_US \
+    DB_NAME=wordpress \
+    DB_USER=wordpress \
+    DB_PREFIX=1sswp_ \
+    DB_CHARSET=utf8 \
+    CACHE_ENABLED=0 \
+    CACHE_200_MINUTES=1
+    
+# Download wp cli
+RUN curl -sSLo /usr/local/bin/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x /usr/local/bin/wp-cli.phar && \
+    ln -s /usr/local/bin/wp-cli.phar /usr/local/bin/wp
+
+ADD ./rootfs /
+RUN chmod +x /usr/local/bin/preseed/*.sh
