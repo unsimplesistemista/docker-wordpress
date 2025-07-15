@@ -1,4 +1,6 @@
-FROM unsimplesistemista/docker-php-fpm:latest
+ARG BASE_IMAGE=unsimplesistemista/docker-php-fpm:latest
+
+FROM $BASE_IMAGE
 
 ARG user=www-data
 ARG wordpress_version=latest
@@ -23,8 +25,9 @@ ENV USER=${user} \
     CACHE_200_MINUTES=1
     
 # Download wp cli
-RUN curl -sSLo /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x /usr/local/bin/wp
+RUN curl -sSLo /usr/local/bin/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x /usr/local/bin/wp-cli.phar && \
+    ln -s /usr/local/bin/wp-cli.phar /usr/local/bin/wp
 
 ADD ./rootfs /
 RUN chmod +x /usr/local/bin/preseed/*.sh
