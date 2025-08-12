@@ -7,6 +7,9 @@ else
 fi
 perl -p -i -e "s/#SKIP_CACHE#/${SKIP_CACHE}/g" /etc/nginx/sites-available/*
 perl -p -i -e "s/#CACHE_200_MINUTES#/${CACHE_200_MINUTES}/g" /etc/nginx/sites-available/*
+if [ a"${SKIP_RATELIMIT_TOKEN}" != "a" ]; then
+  perl -p -i -e "s/#SKIP_RATELIMIT_TOKEN#/\"~^0:${SKIP_RATELIMIT_TOKEN}\\$\"  \"\"; # You have the magic skip token/g" /etc/nginx/conf.d/zz-ddos.conf
+fi
 
 # Make it possible to run wordpress sites in subfolders ...
 for wordpress_subfolder in ${WORDPRESS_SUBFOLDERS}; do
