@@ -5,8 +5,12 @@ if [ ${CACHE_ENABLED} -eq 1 ]; then
 else
   SKIP_CACHE=1
 fi
+
+RATE_LIMIT_SCAPED=`echo ${RATE_LIMIT} | sed "s/\//\\\\\\\\\//g"`
+
 perl -p -i -e "s/#SKIP_CACHE#/${SKIP_CACHE}/g" /etc/nginx/sites-available/*
 perl -p -i -e "s/#CACHE_200_MINUTES#/${CACHE_200_MINUTES}/g" /etc/nginx/sites-available/*
+perl -p -i -e "s/#RATE_LIMIT#/${RATE_LIMIT_SCAPED}/g" /etc/nginx/sites-available/*
 if [ a"${SKIP_RATELIMIT_TOKEN}" != "a" ]; then
   perl -p -i -e "s/#SKIP_RATELIMIT_TOKEN#/\"~^0:${SKIP_RATELIMIT_TOKEN}\\$\"  \"\"; # You have the magic skip token/g" /etc/nginx/conf.d/zz-ddos.conf
 fi

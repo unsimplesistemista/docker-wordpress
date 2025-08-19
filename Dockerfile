@@ -22,7 +22,8 @@ ENV USER=${user} \
     DB_PREFIX=1sswp_ \
     DB_CHARSET=utf8 \
     CACHE_ENABLED=0 \
-    CACHE_200_MINUTES=1
+    CACHE_200_MINUTES=1 \
+    RATE_LIMIT=30r/m
     
 # Download wp cli
 RUN curl -sSLo /usr/local/bin/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
