@@ -33,15 +33,21 @@ for SITE_PATH in $(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d); do
     TMP_DIR="${TMP_BASE}/${SITE}"
 
     # 1a. Create system user (runs on every start; fast, no filesystem writes)
+    # UID is derived deterministically from the site name so it survives container
+    # restarts without drift, even when /etc/passwd is ephemeral. 8 hex chars of
+    # MD5 give ~4.1B slots (100000–4100099999); birthday collision probability is
+    # ~0.012% at 1000 sites and ~1.2% at 10000 sites.
+    SITE_UID=$(( ( 0x$(printf '%s' "$SITE" | md5sum | cut -c1-8) % 4100000000 ) + 100000 ))
     if ! id "$USERNAME" &>/dev/null; then
-        useradd --no-create-home --shell /usr/sbin/nologin --system "$USERNAME"
-        echo "[site-isolation] Created user: ${USERNAME} for site: ${SITE}"
+        useradd --no-create-home --shell /usr/sbin/nologin \
+                --uid "$SITE_UID" "$USERNAME"
+        echo "[site-isolation] Created user: ${USERNAME} (uid=${SITE_UID}) for site: ${SITE}"
         CHANGED=1
     fi
 
     # 1b. Apply ownership and permissions when the site dir isn't already owned by
-    # this user. Comparing UIDs (not names) catches the case where the container
-    # restarted and useradd assigned a different UID to the same username.
+    # this user. Comparing UIDs (not names) is a no-op here since the UID is now
+    # stable, but it correctly handles any manual uid changes or first-run chowns.
     if [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
         chown -R "${USERNAME}:www-data" "$SITE_PATH"
         chmod -R u=rwX,g=rX,o= "$SITE_PATH"
