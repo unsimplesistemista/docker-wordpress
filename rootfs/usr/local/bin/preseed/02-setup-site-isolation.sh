@@ -5,5 +5,5 @@ SCRIPT=/usr/local/bin/setup-site-isolation.sh
 
 chmod +x "$SCRIPT"
 
-# Run immediately so pools exist before PHP-FPM accepts traffic
-"$SCRIPT"
+# Fire and forget — cron picks it up within 1 minute; PHP-FPM reloads via USR2
+"$SCRIPT" &

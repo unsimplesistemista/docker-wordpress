@@ -32,4 +32,4 @@ RUN curl -sSLo /usr/local/bin/wp-cli.phar https://raw.githubusercontent.com/wp-c
 
 ADD ./rootfs /
 RUN chmod +x /usr/local/bin/preseed/*.sh && \
-    chmod 0644 /etc/cron.d/colibree_site-isolation
+    chmod 0644 /etc/cron.d/*

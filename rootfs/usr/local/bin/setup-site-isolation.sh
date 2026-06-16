@@ -71,8 +71,8 @@ user  = ${USERNAME}
 group = ${USERNAME}
 
 listen       = ${SOCK_PATH}
-listen.owner = www-data
-listen.group = www-data
+listen.owner = \${USER}
+listen.group = \${USER}
 listen.mode  = 0660
 
 ; Spawn workers only on demand — idle sites cost zero memory
@@ -80,12 +80,15 @@ pm                      = ondemand
 pm.max_children         = 10
 pm.process_idle_timeout = 10s
 pm.max_requests         = 500
+pm.status_path          = /status
 
 ; Restrict PHP to this site's webroot only
 php_admin_value[open_basedir]      = ${SITE_PATH}:${TMP_DIR}
 php_admin_value[upload_tmp_dir]    = ${TMP_DIR}/upload
 php_admin_value[session.save_path] = ${TMP_DIR}/sessions
 php_admin_value[error_log]         = ${LOG_DIR}/${SITE}.error.log
+
+include = \${PHP_ENV_FILE}
 EOF
         echo "[site-isolation] Created FPM pool: ${POOL_CONF}"
         CHANGED=1
