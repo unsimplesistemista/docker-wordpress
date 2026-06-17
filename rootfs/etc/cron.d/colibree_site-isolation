@@ -1,1 +1,1 @@
-* * * * * root /usr/local/bin/setup-site-isolation.sh 2>&1 | logger -t setup-site-isolation
+* * * * * root /usr/local/bin/setup-site-isolation.sh 2>&1 | logger -t setup-site-isolation.sh
