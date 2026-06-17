@@ -87,9 +87,9 @@ listen.mode  = 0660
 
 ; Spawn workers only on demand — idle sites cost zero memory
 pm                      = ondemand
-pm.max_children         = 10
-pm.process_idle_timeout = 10s
-pm.max_requests         = 500
+pm.max_children         = \${FPM_PM_MAX_CHILDREN}
+pm.process_idle_timeout = \${FPM_PM_PROCESS_IDLE_TIMEOUT}
+pm.max_requests         = \${FPM_PM_MAX_REQUESTS}
 pm.status_path          = /status
 
 ; Restrict PHP to this site's webroot only
