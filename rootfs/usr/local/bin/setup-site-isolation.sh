@@ -9,9 +9,10 @@ CHANGED=0
 
 LOCK_FILE="${SITES_DIR}/.setup-site-isolation.lock"
 exec 9>"$LOCK_FILE"
+SKIP_CHOWN=0
 if ! flock -n 9; then
-    echo "[site-isolation] already running, skipping" >&2
-    exit 0
+    echo "[site-isolation] another instance running, skipping chown/chmod" >&2
+    SKIP_CHOWN=1
 fi
 
 # Detect active PHP version
@@ -57,7 +58,7 @@ for SITE_PATH in $(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d); do
     # its UID acts as a commit marker — a mid-run restart re-triggers this block.
     # Dirs get g+s (setgid) so files created by PHP-FPM inherit group www-data,
     # letting nginx read them via group bits without needing other=r.
-    if [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
+    if [ "$SKIP_CHOWN" -eq 0 ] && [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
         find "$SITE_PATH" -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
         find "$SITE_PATH" -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
         find "$SITE_PATH" -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
