@@ -93,10 +93,10 @@ pm.max_requests         = \${FPM_PM_MAX_REQUESTS}
 pm.status_path          = /status
 
 ; Restrict PHP to this site's webroot only
-php_admin_value[open_basedir]      = ${SITE_PATH}:${TMP_DIR}
+php_admin_value[open_basedir]      = ${SITE_PATH}:${TMP_DIR}:/dev/fd/
 php_admin_value[upload_tmp_dir]    = ${TMP_DIR}/upload
 php_admin_value[session.save_path] = ${TMP_DIR}/sessions
-php_admin_value[error_log]         = ${LOG_DIR}/${SITE}.error.log
+php_admin_value[error_log]         = /dev/fd/2
 
 include = \${PHP_ENV_FILE}
 EOF
@@ -107,11 +107,10 @@ done
 
 # Graceful PHP-FPM reload (USR2) if anything changed
 if [ "$CHANGED" -eq 1 ]; then
-    FPM_PID_FILE=$(find /run /var/run -name "php*fpm*.pid" 2>/dev/null | head -1)
-    if [ -n "$FPM_PID_FILE" ] && [ -f "$FPM_PID_FILE" ]; then
-        kill -USR2 "$(cat "$FPM_PID_FILE")" && \
-            echo "[site-isolation] PHP-FPM reloaded (USR2)"
+    FPM_PID=/var/run/php-fpm.pid
+    if [ -f "$FPM_PID" ]; then
+        kill -USR2 "$(cat "$FPM_PID")" && echo "[site-isolation] PHP-FPM reloaded (USR2)"
     else
-        echo "[site-isolation] WARNING: PHP-FPM pid file not found — pool will load on next FPM start"
+        echo "[site-isolation] WARNING: PHP-FPM pid file not found at ${FPM_PID}" >&2
     fi
 fi
