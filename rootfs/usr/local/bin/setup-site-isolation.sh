@@ -7,6 +7,13 @@ TMP_BASE="/tmp/php-fpm"
 LOG_DIR="/var/log/php-fpm"
 CHANGED=0
 
+LOCK_FILE="${SITES_DIR}/.setup-site-isolation.lock"
+exec 9>"$LOCK_FILE"
+if ! flock -n 9; then
+    echo "[site-isolation] already running, skipping" >&2
+    exit 0
+fi
+
 # Detect active PHP version
 PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)
 if [ -z "$PHP_VERSION" ]; then
@@ -54,8 +61,8 @@ for SITE_PATH in $(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d); do
         find "$SITE_PATH" -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
         find "$SITE_PATH" -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
         find "$SITE_PATH" -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
-        chown "${USERNAME}:www-data" "$SITE_PATH"
         chmod u=rwx,g=rxs,o= "$SITE_PATH"
+        chown "${USERNAME}:www-data" "$SITE_PATH"
         echo "[site-isolation] Applied permissions for: ${SITE}"
     fi
 
