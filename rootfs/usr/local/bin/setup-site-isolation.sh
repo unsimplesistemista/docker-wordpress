@@ -46,13 +46,16 @@ for SITE_PATH in $(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d); do
     fi
 
     # 1b. Apply ownership and permissions when the site dir isn't already owned by
-    # this user. Comparing UIDs (not names) is a no-op here since the UID is now
-    # stable, but it correctly handles any manual uid changes or first-run chowns.
+    # this user. Contents are updated first; SITE_PATH itself is chowned last so
+    # its UID acts as a commit marker — a mid-run restart re-triggers this block.
+    # Dirs get g+s (setgid) so files created by PHP-FPM inherit group www-data,
+    # letting nginx read them via group bits without needing other=r.
     if [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
-        chown -R "${USERNAME}:www-data" "$SITE_PATH"
-        chmod -R u=rwX,g=rX,o= "$SITE_PATH"
-        find "$SITE_PATH" -type d \( -name "uploads" -o -name "cache" -o -name "upgrade" \) \
-            -exec chmod g+w {} +
+        find "$SITE_PATH" -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
+        find "$SITE_PATH" -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
+        find "$SITE_PATH" -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
+        chown "${USERNAME}:www-data" "$SITE_PATH"
+        chmod u=rwx,g=rxs,o= "$SITE_PATH"
         echo "[site-isolation] Applied permissions for: ${SITE}"
     fi
 
