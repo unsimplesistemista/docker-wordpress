@@ -27,4 +27,6 @@ RUN curl -sSLo /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds
     chmod +x /usr/local/bin/wp
 
 ADD ./rootfs /
-RUN chmod +x /usr/local/bin/preseed/*.sh
+RUN chmod +x /usr/local/bin/*.sh && \
+    /usr/local/bin/preseed/*.sh && \
+    chmod 0644 /etc/cron.d/*
