@@ -30,7 +30,9 @@ fi
 echo "Creating site for domain ${DOMAIN} ..."
 [ a"${createMySQLDatabase}" == a"true" ] && `dirname $0`/create-new-mysql-db.sh "${CREATED_AT}" "${APP_DB_NAME}" "${APP_DB_USER}" "${APP_DB_PASSWORD}"
 mkdir -p ${DOCROOT_FOLDER}
-ln -s ${DOCROOT_FOLDER} $(dirname ${DOCROOT_FOLDER})/www.${DOMAIN}
+pushd $(dirname ${DOCROOT_FOLDER}) >/dev/null
+ln -s ${DOMAIN} www.${DOMAIN}
+popd >/dev/null
 [ a"${CREATED_AT}" != "a" ] && echo "Site created with <a href=\"https://solidwp.host\">solidwp.host</a> in just $((`date +%s`-${CREATED_AT})) seconds!<br><br>Connect to your site via SFTP to add your files." > ${DOCROOT_FOLDER}/index.html
 echo "Creation of site for domain ${DOMAIN} finished"
 

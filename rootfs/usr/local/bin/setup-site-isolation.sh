@@ -68,7 +68,7 @@ for SITE_PATH in $SITE_PATHS; do
     # ~0.012% at 1000 sites and ~1.2% at 10000 sites.
     SITE_UID=$(( ( 0x$(printf '%s' "$SITE" | md5sum | cut -c1-8) % 4100000000 ) + 100000 ))
     if ! id "$USERNAME" &>/dev/null; then
-        useradd --no-create-home --shell /usr/sbin/nologin \
+        /usr/sbin/useradd --no-create-home --shell /usr/sbin/nologin \
                 --uid "$SITE_UID" "$USERNAME"
         echo "[site-isolation] Created user: ${USERNAME} (uid=${SITE_UID}) for site: ${SITE}"
         CHANGED=1
