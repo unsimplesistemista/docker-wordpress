@@ -7,6 +7,16 @@ TMP_BASE="/tmp/php-fpm"
 LOG_DIR="/var/log/php-fpm"
 CHANGED=0
 
+DOMAIN=""
+FORCE=0
+while getopts "d:f" opt; do
+    case "$opt" in
+        d) DOMAIN="$OPTARG" ;;
+        f) FORCE=1 ;;
+        *) echo "Usage: $0 [-d domain] [-f]" >&2; exit 1 ;;
+    esac
+done
+
 LOCK_FILE="${SITES_DIR}/.setup-site-isolation.lock"
 exec 9>"$LOCK_FILE"
 SKIP_CHOWN=0
@@ -30,7 +40,18 @@ fi
 
 mkdir -p "$SOCK_DIR" "$LOG_DIR"
 
-for SITE_PATH in $(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d); do
+if [ -n "$DOMAIN" ]; then
+    SITE_PATH="${SITES_DIR}/${DOMAIN}"
+    if [ ! -d "$SITE_PATH" ]; then
+        echo "[site-isolation] ERROR: site directory not found: ${SITE_PATH}" >&2
+        exit 1
+    fi
+    SITE_PATHS="$SITE_PATH"
+else
+    SITE_PATHS=$(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d)
+fi
+
+for SITE_PATH in $SITE_PATHS; do
     SITE=$(basename "$SITE_PATH")
 
     # Sanitize: Linux usernames must be <=32 chars, alphanumeric + underscore only
@@ -58,7 +79,14 @@ for SITE_PATH in $(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d); do
     # its UID acts as a commit marker — a mid-run restart re-triggers this block.
     # Dirs get g+s (setgid) so files created by PHP-FPM inherit group www-data,
     # letting nginx read them via group bits without needing other=r.
-    if [ "$SKIP_CHOWN" -eq 0 ] && [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
+    NEEDS_CHOWN=0
+    if [ "$FORCE" -eq 1 ]; then
+        NEEDS_CHOWN=1
+    elif [ "$SKIP_CHOWN" -eq 0 ] && [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
+        NEEDS_CHOWN=1
+    fi
+
+    if [ "$NEEDS_CHOWN" -eq 1 ]; then
         find "$SITE_PATH" -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
         find "$SITE_PATH" -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
         find "$SITE_PATH" -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
