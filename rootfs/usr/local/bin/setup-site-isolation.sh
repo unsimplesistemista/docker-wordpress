@@ -93,7 +93,7 @@ for SITE_PATH in $SITE_PATHS; do
         chown root:root "$SITE_PATH"
         chmod 755 "$SITE_PATH"
         chown www-data:www-data "$SITE_PATH"/log
-        chmod ug-s "$SITE_PATH"/{,log}
+        chmod u=rwx,g=rx-s,o= "$SITE_PATH"/{,log}
         chown "${USERNAME}:www-data" "$SITE_PATH"/www
         echo "[site-isolation] Applied permissions for: ${SITE}"
     fi
