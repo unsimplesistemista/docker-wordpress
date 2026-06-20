@@ -20,7 +20,7 @@ APP_ADMIN_USER=${8:-"admin"}
 APP_ADMIN_PASSWORD=${9:-`pwgen 20 1`}
 APP_ADMIN_EMAIL=${10:-"webs@virality.media"}
 
-DOCROOT_FOLDER=/var/www/public/${DOMAIN}
+DOCROOT_FOLDER=/var/www/public/${DOMAIN}/www
 
 if [ a${DOMAIN} == "a" ]; then
   echo "ERROR: Empty domain, please specify a domain. Usage: $0 yourdomain.com"
