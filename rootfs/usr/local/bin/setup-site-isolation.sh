@@ -82,16 +82,19 @@ for SITE_PATH in $SITE_PATHS; do
     NEEDS_CHOWN=0
     if [ "$FORCE" -eq 1 ]; then
         NEEDS_CHOWN=1
-    elif [ "$SKIP_CHOWN" -eq 0 ] && [ "$(stat -c '%u' "$SITE_PATH")" != "$(id -u "$USERNAME")" ]; then
+    elif [ "$SKIP_CHOWN" -eq 0 ] && [ "$(stat -c '%u' "$SITE_PATH"/www)" != "$(id -u "$USERNAME")" ]; then
         NEEDS_CHOWN=1
     fi
 
     if [ "$NEEDS_CHOWN" -eq 1 ]; then
-        find "$SITE_PATH" -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
-        find "$SITE_PATH" -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
-        find "$SITE_PATH" -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
+        find "$SITE_PATH"/www -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
+        find "$SITE_PATH"/www -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
+        find "$SITE_PATH"/www -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
         chmod u=rwx,g=rxs,o= "$SITE_PATH"
-        chown "${USERNAME}:www-data" "$SITE_PATH"
+        chown root:root "$SITE_PATH"
+        chmod 755 "$SITE_PATH"
+        chmod www-data:www-data "$SITE_PATH"/log
+        chown "${USERNAME}:www-data" "$SITE_PATH"/www
         echo "[site-isolation] Applied permissions for: ${SITE}"
     fi
 
