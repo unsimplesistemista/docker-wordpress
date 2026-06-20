@@ -88,12 +88,12 @@ for SITE_PATH in $SITE_PATHS; do
 
     if [ "$NEEDS_CHOWN" -eq 1 ]; then
         find "$SITE_PATH"/www -mindepth 1 -exec chown "${USERNAME}:www-data" {} +
-        find "$SITE_PATH"/www -mindepth 1 -type f -exec chmod u=rwX,g=rX,o= {} +
-        find "$SITE_PATH"/www -mindepth 1 -type d -exec chmod u=rwx,g=rxs,o= {} +
-        chmod u=rwx,g=rxs,o= "$SITE_PATH"
+        find "$SITE_PATH"/www -type f -exec chmod u=rwX,g=rX,o= {} +
+        find "$SITE_PATH"/www -type d -exec chmod u=rwx,g=rxs,o= {} +
         chown root:root "$SITE_PATH"
         chmod 755 "$SITE_PATH"
         chown www-data:www-data "$SITE_PATH"/log
+        chmod ug-s "$SITE_PATH"/{,log}
         chown "${USERNAME}:www-data" "$SITE_PATH"/www
         echo "[site-isolation] Applied permissions for: ${SITE}"
     fi
