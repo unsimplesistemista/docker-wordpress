@@ -33,6 +33,6 @@ mkdir -p ${DOCROOT_FOLDER}/{www,log}
 pushd $(dirname ${DOCROOT_FOLDER}) >/dev/null
 ln -s ${DOMAIN} www.${DOMAIN}
 popd >/dev/null
-[ a"${CREATED_AT}" != "a" ] && echo "Site created with <a href=\"https://solidwp.host\">solidwp.host</a> in just $((`date +%s`-${CREATED_AT})) seconds!<br><br>Connect to your site via SFTP to add your files." > ${DOCROOT_FOLDER}/index.html
+[ a"${CREATED_AT}" != "a" ] && echo "Site created with <a href=\"https://solidwp.host\">solidwp.host</a> in just $((`date +%s`-${CREATED_AT})) seconds!<br><br>Connect to your site via SFTP to add your files." > ${DOCROOT_FOLDER}/www/index.html
 echo "Creation of site for domain ${DOMAIN} finished"
 
