@@ -29,7 +29,7 @@ fi
 
 echo "Creating site for domain ${DOMAIN} ..."
 [ a"${createMySQLDatabase}" == a"true" ] && `dirname $0`/create-new-mysql-db.sh "${CREATED_AT}" "${APP_DB_NAME}" "${APP_DB_USER}" "${APP_DB_PASSWORD}"
-mkdir -p ${DOCROOT_FOLDER}/www
+mkdir -p ${DOCROOT_FOLDER}/{www,log}
 pushd $(dirname ${DOCROOT_FOLDER}) >/dev/null
 ln -s ${DOMAIN} www.${DOMAIN}
 popd >/dev/null
