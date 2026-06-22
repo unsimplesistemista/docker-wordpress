@@ -127,7 +127,7 @@ pm.status_path          = /status
 ; Restrict PHP to this site's webroot only
 php_admin_value[open_basedir]      = ${SITE_PATH}:${TMP_DIR}:/dev/fd/
 php_admin_value[upload_tmp_dir]    = ${TMP_DIR}/upload
-php_admin_value[session.save_path] = ${TMP_DIR}/sessions
+php_value[session.save_path] = ${TMP_DIR}/sessions
 php_admin_value[error_log]         = /dev/fd/2
 
 include = \${PHP_ENV_FILE}
